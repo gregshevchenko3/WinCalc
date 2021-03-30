@@ -29,6 +29,7 @@ struct binary_operation {
 struct window {
 	HWND hwnd;
 	int rStart, rEnd, cStart, cEnd;
+	HFONT hFont;
 };
 class Grid {
 	bool** isuse;

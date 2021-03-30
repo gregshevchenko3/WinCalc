@@ -212,6 +212,7 @@ bool Grid::add(const wchar_t* cls, const wchar_t* wnd_name, DWORD style, int rSt
 		wnd.cEnd = cEnd;
 		wnd.rEnd = rEnd;
 		wnd.rStart = rStart;
+		wnd.hFont = hFont;
 		childs.push_back(wnd);
 		ShowWindow(child, SW_SHOW);
 		for (auto r = rStart; r < rEnd; r++)
@@ -224,8 +225,11 @@ void Grid::resize(unsigned int width, unsigned int height) {
 	px_per_row = height / rcount;
 	px_per_column = width / ccount;
 	for (struct window w: this->childs) {
-		MoveWindow(w.hwnd, px_per_column * w.cStart, px_per_row * w.rStart,
-			px_per_column * w.cEnd, px_per_row * w.rEnd, true);
+		DeleteObject(w.hFont);
+		HFONT hFont = CreateFont(px_per_row, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial");
+		SendMessage(w.hwnd, WM_SETFONT, WPARAM(hFont), true);
+		MoveWindow(w.hwnd, px_per_column * w.cStart, px_per_row * w.rStart, px_per_column * w.cEnd, px_per_row * w.rEnd, true);
 	}
 }
 bool Grid::is_region_free(int rStart, int rEnd, int cStart, int cEnd) {
